@@ -6,7 +6,7 @@
 #------------------------------------------------------------------------------
 EXEC = hyperscan.so
 
-CFLAGS = -g -O0 -Wall -Werror -Iinc -fPIC
+CFLAGS = -g -O0 -Wall -Werror -Iinclude -fPIC
 LDFLAGS = ./lib/libhs.a -shared
 CC = g++
 
