@@ -6,7 +6,7 @@ ffi.cdef[[
 int fast(int *t,int n,int m);
 ]]  
 
-local t={55,29,11,33,222,77,20,55,90,0}
+local t={3,1,5,4,2}
 local len=#t
 local t_c=ffi.new("int[?]",len,t)
 local re=myffi.fast(t_c,0,len-1)

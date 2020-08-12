@@ -17,6 +17,10 @@ using namespace std;
 
 #define DEBUG 
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 int fast(int *a,int m,int n);
 
 int main(int argc, char **argv)
@@ -42,4 +46,6 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-
+#ifdef __cplusplus
+}
+#endif

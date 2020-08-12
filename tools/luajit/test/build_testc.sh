@@ -1,2 +1,2 @@
 #!/bin/bash
-g++ -std=c++11 test_myclib.cpp  -lmyclib -L./ -o test_myclib
+g++ -std=c++11 testc.cpp  -lmyclib -L./ -o testc

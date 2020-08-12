@@ -1,6 +1,9 @@
 
 #include <cstdio>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 int fast(int *a,int m,int n)
 {  
 	int key;
@@ -32,3 +35,7 @@ int fast(int *a,int m,int n)
 
 	return 0;
 }
+
+#ifdef __cplusplus
+}
+#endif
