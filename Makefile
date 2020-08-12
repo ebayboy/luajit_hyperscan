@@ -1,10 +1,11 @@
 CC = g++
 LD = g++
 
-TARGET = liblhps
+TARGET = liblhps.so
 INCLUDES = -I../include -I./
 LIB = -L../libs 
-CFLAGS = -std=c++11 -Wall  -lhs -fPIC -shared
+CFLAGS = -O0 -std=c++11 -Wall -fPIC
+LDFLAGS = -shared -lhs
 
 SRC := $(wildcard src/*.cpp) 
 OBJS=$(SRC:.cpp=.o)
@@ -16,7 +17,7 @@ OBJS=$(SRC:.cpp=.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(LD) -o $@ $^ $(INCLUDES) $(LIB) 
+	$(LD) -o $@ $^ $(INCLUDES) $(LIB)  $(LDFLAGS)
 
 %.o:%.cpp 
 	$(CC) -c -g $< $(INCLUDES) $(CFLAGS) -o $@ 
