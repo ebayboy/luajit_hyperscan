@@ -1,0 +1,10 @@
+
+
+1.  sample lua <-> c
+- wrap sample c so
+- lua ffi call liblhps.so
+
+
+2. wrap hyperscan
+- lua ffi call hyerscan.
+
