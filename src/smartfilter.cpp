@@ -16,13 +16,20 @@ using namespace std;
 	extern "C" {
 #endif
 
+#define DEBUG
+
+#ifdef DEBUG
+#define DD(fmt, args...) printf(fmt, ##args)
+#else
+#define DD(fmt, args...)
+#endif
 
 struct filter_t {
 	char name[512];
 	hs_database_t *database;
 	hs_scratch_t *scratch;
 
-	vector<const char *> patterns;
+	vector<const char *> patterns; //need free
 	vector<unsigned int> flags;
 	vector<unsigned int> ids;
 };
@@ -47,6 +54,24 @@ static int on_match(unsigned int id, unsigned long long from,
     return 0;
 }
 
+void filter_delete(void *filter)
+{
+	filter_t *f = (filter_t *)filter;
+	if (f) {
+		if (f->scratch) {
+			fprintf(stderr, "free scratch %p\n", f->scratch);
+			hs_free_scratch(f->scratch);
+		}
+		if (f->database) {
+			fprintf(stderr, "free database %p\n", f->database);
+			hs_free_database(f->database);
+		}
+
+		fprintf(stderr, "free filter %p\n", f);
+		delete f;
+	}
+}
+
 void *filter_new(const char *name, const char **patterns, unsigned int *flags, unsigned int *ids, size_t size)
 {
 	filter_t *filter = NULL;
@@ -54,7 +79,7 @@ void *filter_new(const char *name, const char **patterns, unsigned int *flags, u
 	size_t i;
 	hs_error_t err;
 
-	filter = (filter_t *)malloc(sizeof(filter_t));
+	filter = new filter_t();
 	memset((void *)filter, 0, sizeof(filter_t));
 	if (filter == NULL) {
 		fprintf(stderr, "ERROR: Unable to alloc filter!!!\n");
@@ -103,38 +128,10 @@ error:
 		hs_free_compile_error(compile_err);
 	}
 
-	if (filter->scratch) {
-		free(filter->scratch);
-	}
-
-	if (filter->database) {
-		free(filter->database);
-	}
-
-	if (filter) {
-		free(filter);
-	}
+	filter_delete(filter);
 
 	return NULL;
 };
-
-void filter_free(void *filter)
-{
-	filter_t *f = (filter_t *)filter;
-	if (f) {
-		if (f->scratch) {
-			fprintf(stderr, "free scratch %p\n", f->scratch);
-			hs_free_scratch(f->scratch);
-		}
-		if (f->database) {
-			fprintf(stderr, "free database %p\n", f->database);
-			hs_free_database(f->database);
-		}
-
-		fprintf(stderr, "free filter %p\n", f);
-		free(f);
-	}
-}
 
 int filter_match(void *filter, const char *inputData, size_t dlen)
 {
@@ -152,6 +149,31 @@ int filter_match(void *filter, const char *inputData, size_t dlen)
 	}
 
 	return 0;
+}
+
+void hello()
+{
+	printf("%s:%d hello!\n", __func__, __LINE__);
+}
+
+void printArray(int *a, size_t size)
+{
+	size_t i;
+	for (i=0; i <size; i++)
+	{
+		printf("a[%lu]:%d ", i, a[i]);
+	}
+	printf("\n");
+}
+
+void printStrArray(const char **a, size_t size)
+{
+	size_t i;
+	for (i=0; i <size; i++)
+	{
+		printf("a[%lu]:%s ", i, a[i]);
+	}
+	printf("\n");
 }
 
 #ifdef __cplusplus

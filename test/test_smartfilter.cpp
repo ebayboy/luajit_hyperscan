@@ -24,6 +24,25 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+	hello();
+
+	int a[5]= {1,2,3,4,5};
+	printArray(a, 5);
+
+	const char *stra[4];
+
+	char *str1= (char *)"my";
+	char *str2= (char *)"name";
+	char *str3= (char *)"is";
+	char *str4= (char *)"fanpf";
+
+	stra[0] = str1;
+	stra[1] = str2;
+	stra[2] = str3;
+	stra[3] = str4;
+
+	printStrArray(stra, 4);
+
 	vector<const char *>patterns;
 	vector<unsigned int>flags;
 	vector<unsigned int>ids;
@@ -44,8 +63,7 @@ int main(int argc, char **argv)
 	int ret = filter_match(f, str.data(), str.size());
 	cout << "filter_match ret:" << ret << endl;
 
-
-	filter_free(f);
+	filter_delete(f);
 
 	return 0;
 }
