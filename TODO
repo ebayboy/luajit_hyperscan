@@ -6,5 +6,6 @@
 
 
 2. wrap hyperscan
+- c wrapper for hyperscan
 - lua ffi call hyerscan.
 
