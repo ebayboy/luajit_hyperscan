@@ -1,9 +1,9 @@
 CC = g++
 LD = g++
 
-TARGET = liblhps.so
-INCLUDES = -I../include -I./
-LIB = -L../libs 
+TARGET = build/libsmartfilter.so
+INCLUDES = -I ./include 
+LIB = -L ./lib
 CFLAGS = -O0 -std=c++11 -Wall -fPIC
 LDFLAGS = -shared -lhs
 
