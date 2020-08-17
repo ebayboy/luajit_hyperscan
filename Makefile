@@ -18,6 +18,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(LD) -o $@ $^ $(INCLUDES) $(LIB)  $(LDFLAGS)
+	cp -af src/smartfilter.h build/
 
 %.o:%.cpp 
 	$(CC) -c -g $< $(INCLUDES) $(CFLAGS) -o $@ 
