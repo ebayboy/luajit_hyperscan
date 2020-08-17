@@ -11,9 +11,9 @@ void printArray(int *a, size_t size);
 void printStrArray(const char **a, size_t size);
 ]]  
 
-local lua_patterns = {"1001", "1002"}
-local lua_flags = { 2, 2 }
-local lua_ids = {101, 102}
+local lua_patterns = {"1001", "1002", "1003"}
+local lua_flags = { 2, 2, 2 }
+local lua_ids = {101, 102, 103}
 
 --lua数组下表从1开始， C数组下标从0开始
 
