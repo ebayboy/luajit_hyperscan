@@ -3,13 +3,43 @@ local ffi=require"ffi"
 local myffi=ffi.load("libsmartfilter")
 
 ffi.cdef[[
+
+#define RESULT_SET_MAX			8
+
+#define HS_FLAG_CASELESS        1
+#define HS_FLAG_DOTALL          2
+#define HS_FLAG_SINGLEMATCH     8
+#define HS_FLAG_SOM_LEFTMOST    256
+
+#define RULES_HS_FLAGS   (HS_FLAG_CASELESS    | \
+		HS_FLAG_SINGLEMATCH | \
+		HS_FLAG_DOTALL)
+
+#define RULES_HS_FLAGS_LEFTMOST        (HS_FLAG_CASELESS    | \
+		HS_FLAG_DOTALL      | \
+		HS_FLAG_SOM_LEFTMOST)
+
+
+typedef struct {
+	unsigned int id;
+	unsigned long long from;
+	unsigned long long to;
+} result_t;
+
+typedef struct {
+	unsigned int cursor;
+	result_t results[RESULT_SET_MAX]; //new
+} result_set_t;
+
 void *filter_new(const char *name, const char **patterns, unsigned int *flags, unsigned int *ids, size_t size);
-int filter_match(void *filter, const char *inputData, size_t dlen);
-void *filter_delete(void *f);
+void filter_delete(void *f);
+result_set_t * filter_match(void *filter, const char *inputData, size_t dlen);
+void filter_result_set_delete(result_set_t *result_set);
+
 void hello();
 void printArray(int *a, size_t size);
 void printStrArray(const char **a, size_t size);
-]]  
+]];
 
 local lua_patterns = {"1001", "1002", "1003"}
 local lua_flags = { 2, 2, 2 }
@@ -35,8 +65,12 @@ local name = ffi.new('const char [?]', #"@url", "@url")
 local filter = myffi.filter_new(name, patterns, flags, ids, #lua_ids)
 
 local buf = "asdfasf1001adfa1002sadfaf"
-local ret = myffi.filter_match(filter, buf, #buf)
-print("ret:", ret)
-print("buf:", buf)
+local rset = myffi.filter_match(filter, buf, #buf)
+
+print("rset->cursor:", rset.cursor)
+
+filter_result_set_delete(rset)
 
 myffi.filter_delete(filter);
+
+

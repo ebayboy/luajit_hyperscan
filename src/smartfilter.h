@@ -7,35 +7,28 @@
 extern "C" {
 #endif
 
-#define RESULT_SET_MAX			8
+const static unsigned int RESULT_SET_MAX = 8;
 
-#define HS_FLAG_CASELESS        1
-#define HS_FLAG_DOTALL          2
-#define HS_FLAG_SINGLEMATCH     8
-#define HS_FLAG_SOM_LEFTMOST    256
+typedef enum {
+	F_HS_FLAG_CASELESS = 1,
+	F_HS_FLAG_DOTALL  = 2,
+	F_HS_FLAG_SINGLEMATCH = 8,
+	F_HS_FLAG_SOM_LEFTMOST = 256
+} F_HS_ENUM_T;
 
-#define RULES_HS_FLAGS   (HS_FLAG_CASELESS    | \
-		HS_FLAG_SINGLEMATCH | \
-		HS_FLAG_DOTALL)
+const static unsigned int RULES_HS_FLAGS = F_HS_FLAG_CASELESS | F_HS_FLAG_SINGLEMATCH | F_HS_FLAG_DOTALL;
+const static unsigned int RULES_HS_FLAGS_LEFTMOST = F_HS_FLAG_CASELESS | F_HS_FLAG_DOTALL | F_HS_FLAG_SOM_LEFTMOST;
 
-#define RULES_HS_FLAGS_LEFTMOST        (HS_FLAG_CASELESS    | \
-		HS_FLAG_DOTALL      | \
-		HS_FLAG_SOM_LEFTMOST)
-
-struct result_t {
+typedef struct {
 	unsigned int id;
 	unsigned long long from;
 	unsigned long long to;
-	result_t():id(0), from(0), to(0) {};
-	~result_t() {};
-};
+} result_t;
 
-struct result_set_t {
+typedef struct {
 	unsigned int cursor;
 	result_t results[RESULT_SET_MAX]; //new
-	result_set_t(): cursor(0) {};
-	~result_set_t() {};
-};
+} result_set_t;
 
 void *filter_new(const char *name, const char **patterns, unsigned int *flags, unsigned int *ids, size_t size);
 void filter_delete(void *f);
