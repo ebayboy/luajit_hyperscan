@@ -8,6 +8,8 @@
 
 #include <vector>
 
+#include "smartfilter.h"
+
 using namespace std;
 
 //shared_ptr
@@ -30,38 +32,51 @@ struct filter_t {
 	hs_scratch_t *scratch;
 
 	vector<const char *> patterns; //need free
-	vector<unsigned int> flags;
-	vector<unsigned int> ids;
-};
+	vector<unsigned int> flags; vector<unsigned int> ids;
 
-struct match_t {
-	unsigned int id;
-	unsigned long long from;
-	unsigned long long to;
+	filter_t():database(NULL), scratch(NULL), flags(0) {};
+	~filter_t() {};
 };
 
 struct context_t {
 	filter_t *filter;
 	const char *data;
 	size_t dlen;
+	result_set_t *result_set;
+
+	context_t (filter_t *f, const char *data, size_t dlen): filter(f), data(data), dlen(dlen), result_set(NULL) {};
+	~context_t () {};
 };
 
-/*
- * 
-*/
 static int on_match(unsigned int id, unsigned long long from, unsigned long long to, unsigned int flags, void *context) {
 
 	context_t *ctx = (context_t *)context;
 	filter_t *f = ctx->filter;
+	unsigned int cursor = 0;
+	result_t *r = NULL;
 
-	//export hit payload
-	//hit expr id
+	if (ctx->result_set == NULL){
+		ctx->result_set = new result_set_t();
+		if (ctx->result_set == NULL) {
+			DD("Error: new result_set()");
+			return -1;
+		}
+	} 
 
-    printf("Hit id:%u Match for pattern \"%s\" at offset %llu-%llu flags:%u\n", id, f->name, from, to, flags);
+	cursor = ctx->result_set->cursor;
+	if (cursor >= RESULT_SET_MAX) {
+		DD("WARN: too max result ! continue! rule->cursor:%u\n", cursor);
+		return 0;
+	}
 
-	char buff[50];
-	memcpy(buff, ctx->data + from, to - from);
-	DD("hit_payload:[%s]\n", buff);
+	r = &ctx->result_set->results[cursor];
+
+	r->id = id;
+	r->from = from;
+	r->to= to;
+
+	ctx->result_set->cursor++;
+    DD("Hit id:%u Match for pattern \"%s\" at offset %llu-%llu cursor:%u\n", id, f->name, from, to, cursor);
 
     return 0;
 }
@@ -145,22 +160,57 @@ error:
 	return NULL;
 };
 
-int filter_match(void *filter, const char *inputData, size_t dlen)
+/* RETURN:  error: -1;  succcess:  match times */
+result_set_t * filter_match(void *filter, const char *inputData, size_t dlen)
 {
 	filter_t *f = (filter_t *)filter;
+	context_t *ctx = NULL;
+	result_set_t *rset = NULL;
 
 	if (filter == NULL || inputData == NULL || dlen == 0) {
-		return -1;
+		return NULL;
 	}
 
-	context_t ctx = { f, inputData, dlen };
+	if ((ctx = new context_t(f, inputData, 0)) == NULL) {
+		fprintf(stderr, "Error: new context_t!!!");
+		goto error;
+	}
 
-	if (hs_scan(f->database, inputData, dlen, 0, f->scratch, on_match, &ctx) != HS_SUCCESS) {
+	if (hs_scan(f->database, inputData, dlen, 0, f->scratch, on_match, ctx) != HS_SUCCESS) {
 		fprintf(stderr, "ERROR: Unable to scan input buffer. Exiting.\n");
-		return -1;
+		goto error;
 	}
 
-	return 0;
+	if (ctx) {
+		if (ctx->result_set) {
+			rset = ctx->result_set;
+		}
+		delete ctx;
+	}
+
+	if (rset) {
+		DD("rset->cursor:%u", rset->cursor);
+	}
+
+	return rset;
+
+error:
+	if (ctx) {
+		if (ctx->result_set) {
+			delete ctx->result_set;
+			ctx->result_set = NULL;
+		}
+		delete ctx;
+	}
+
+	return NULL;
+}
+
+void filter_result_set_delete(result_set_t *result_set)
+{
+	if(result_set) {
+		delete result_set;
+	}
 }
 
 void hello()

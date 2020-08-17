@@ -64,8 +64,20 @@ int main(int argc, char **argv)
 	}
 
 	string str = "abcde1001as1002fasf";
-	int ret = filter_match(f, str.data(), str.size());
-	cout << "filter_match ret:" << ret << endl;
+
+	result_set_t *rset = filter_match(f, str.data(), str.size());
+	result_t *r = NULL;
+
+	cout << endl << "====cursor:" << rset->cursor << endl;
+
+	if (rset) {
+		for(unsigned int i= 0; i < rset->cursor; i++)	{
+			r = &rset->results[i];
+			printf("%s:%d rset id:%u from:%u to:%u\n", __func__, __LINE__,  r->id, r->from, r->id);
+		}
+	}
+
+	filter_result_set_delete(rset);
 
 	filter_delete(f);
 
