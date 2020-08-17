@@ -48,10 +48,14 @@ int main(int argc, char **argv)
 	vector<unsigned int>ids;
 
 	patterns.push_back("1001");
+	patterns.push_back("1002");
 
 	//HS_FLAG_DOTALL 
-	flags.push_back(2);
+	flags.push_back(RULES_HS_FLAGS);
+	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+
 	ids.push_back(100);
+	ids.push_back(101);
 
 	void *f = filter_new("@url", patterns.data(),flags.data(), ids.data(), patterns.size());
 	if (f == NULL) {
@@ -59,7 +63,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	string str = "abcde1001asfasf";
+	string str = "abcde1001as1002fasf";
 	int ret = filter_match(f, str.data(), str.size());
 	cout << "filter_match ret:" << ret << endl;
 

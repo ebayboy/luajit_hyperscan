@@ -35,6 +35,8 @@ local name = ffi.new('const char [?]', #"@url", "@url")
 local filter = myffi.filter_new(name, patterns, flags, ids, #lua_ids)
 
 local buf = "asdfasf1001adfa1002sadfaf"
-myffi.filter_match(filter, buf, #buf)
+local ret = myffi.filter_match(filter, buf, #buf)
+print("ret:", ret)
+print("buf:", buf)
 
 myffi.filter_delete(filter);

@@ -34,22 +34,34 @@ struct filter_t {
 	vector<unsigned int> ids;
 };
 
+struct match_t {
+	unsigned int id;
+	unsigned long long from;
+	unsigned long long to;
+};
+
 struct context_t {
 	filter_t *filter;
 	const char *data;
 	size_t dlen;
 };
 
-static int on_match(unsigned int id, unsigned long long from,
-                        unsigned long long to, unsigned int flags, void *ctx) {
+/*
+ * 
+*/
+static int on_match(unsigned int id, unsigned long long from, unsigned long long to, unsigned int flags, void *context) {
 
-	context_t *fctx = (context_t *)ctx;
-	filter_t *f = fctx->filter;
+	context_t *ctx = (context_t *)context;
+	filter_t *f = ctx->filter;
 
 	//export hit payload
 	//hit expr id
 
-    printf("Hit id:%u Match for pattern \"%s\" at offset %llu\n", id, f->name, to);
+    printf("Hit id:%u Match for pattern \"%s\" at offset %llu-%llu flags:%u\n", id, f->name, from, to, flags);
+
+	char buff[50];
+	memcpy(buff, ctx->data + from, to - from);
+	DD("hit_payload:[%s]\n", buff);
 
     return 0;
 }
