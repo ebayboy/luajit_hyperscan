@@ -227,9 +227,9 @@ int test_perf_kmp_cnt()
 		end = clock();
 		double use = end - start;
 		cost = cost + use;
-		cout << "cost: " << use/CLOCKS_PER_SEC << "s" << endl;
+    cout << "cost: " << use/CLOCKS_PER_SEC << "s" << endl;
     cout << "cnt:" << cnt << endl;
-	}
+  }
 
 	double avg = cost /5;
 
@@ -325,7 +325,7 @@ int test_perf_wm()
 	size_t count = 10000000;
 	double cost = 0;
 
-	for (size_t k = 0; k < 10; k++ ) {
+	for (size_t k = 0; k < 5; k++ ) {
 
 		clock_t end, start = clock();
 		for (size_t j = 0; j <count; j++) {
@@ -339,7 +339,7 @@ int test_perf_wm()
 		cout << "cost: " << use/CLOCKS_PER_SEC << "s" << endl;
 	}
 
-	double avg = cost /10;
+	double avg = cost /5;
 
 	cout << "avg:" << avg / CLOCKS_PER_SEC << "s" << endl;
 	filter_delete(f);
@@ -352,12 +352,12 @@ int test_perf_wm()
 int main(int argc, char **argv)
 {
 //	test_c ();
-	//test_perf_wm();
+	test_perf_wm();
 	//test_perf_kmp();
 
 	//test_single();
 	//test_single_cnt();
-	test_perf_kmp_cnt();
+	//test_perf_kmp_cnt();
 
 	return 0;
 }
