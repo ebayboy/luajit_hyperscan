@@ -216,7 +216,7 @@ int test_perf_kmp_cnt()
 	size_t count = 10000000;
 	double cost = 0;
 
-	for (size_t k = 0; k < 5; k++ ) {
+	for (size_t k = 0; k < 3; k++ ) {
 
     int cnt  = 0;
 		clock_t end, start = clock();
@@ -231,7 +231,7 @@ int test_perf_kmp_cnt()
     cout << "cnt:" << cnt << endl;
   }
 
-	double avg = cost /5;
+	double avg = cost /3;
 
 	cout << "avg:" << avg / CLOCKS_PER_SEC << "s" << endl;
 	filter_delete(f);
@@ -325,7 +325,8 @@ int test_perf_wm()
 	size_t count = 10000000;
 	double cost = 0;
 
-	for (size_t k = 0; k < 5; k++ ) {
+  size_t loops = 3;
+	for (size_t k = 0; k < loops; k++ ) {
 
 		clock_t end, start = clock();
 		for (size_t j = 0; j <count; j++) {
@@ -339,7 +340,7 @@ int test_perf_wm()
 		cout << "cost: " << use/CLOCKS_PER_SEC << "s" << endl;
 	}
 
-	double avg = cost /5;
+	double avg = cost / loops;
 
 	cout << "avg:" << avg / CLOCKS_PER_SEC << "s" << endl;
 	filter_delete(f);

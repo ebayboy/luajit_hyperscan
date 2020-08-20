@@ -1,0 +1,8 @@
+## no tcmalloc
+avg:7.10667s
+
+##tcmalloc shared
+avg:5.88667s
+
+##tcmalloc static
+avg:5.89667s
