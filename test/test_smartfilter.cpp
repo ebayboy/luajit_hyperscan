@@ -187,13 +187,21 @@ int test_perf_kmp_cnt()
 	vector<unsigned int>flags;
 	vector<unsigned int>ids;
 
+	patterns.push_back( "this is"  );
 	patterns.push_back( "pattern"  );
-
+	patterns.push_back( "google!"  );
+	patterns.push_back( "anber"  );
 
 	//HS_FLAG_DOTALL 
 	flags.push_back(RULES_HS_FLAGS);
+	flags.push_back(RULES_HS_FLAGS);
+	flags.push_back(RULES_HS_FLAGS);
+	flags.push_back(RULES_HS_FLAGS);
 
 	ids.push_back(1000);
+	ids.push_back(1001);
+	ids.push_back(1002);
+	ids.push_back(1003);
 
 	void *f = filter_new("TestPerformance", patterns.data(),flags.data(), ids.data(), patterns.size());
 	if (f == NULL) {
@@ -208,19 +216,22 @@ int test_perf_kmp_cnt()
 	size_t count = 10000000;
 	double cost = 0;
 
-	for (size_t k = 0; k < 10; k++ ) {
+	for (size_t k = 0; k < 5; k++ ) {
+
+    int cnt  = 0;
 		clock_t end, start = clock();
 		for (size_t j = 0; j <count; j++) {
-			int cnt = filter_match_cnt(f, str.data(), str.size());
+			cnt = filter_match_cnt(f, str.data(), str.size());
 		}
 
 		end = clock();
 		double use = end - start;
 		cost = cost + use;
 		cout << "cost: " << use/CLOCKS_PER_SEC << "s" << endl;
+    cout << "cnt:" << cnt << endl;
 	}
 
-	double avg = cost /10;
+	double avg = cost /5;
 
 	cout << "avg:" << avg / CLOCKS_PER_SEC << "s" << endl;
 	filter_delete(f);
@@ -290,7 +301,6 @@ int test_perf_wm()
 	patterns.push_back( "google!"  );
 	patterns.push_back( "anber"  );
 
-
 	//HS_FLAG_DOTALL 
 	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
 	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
@@ -316,6 +326,7 @@ int test_perf_wm()
 	double cost = 0;
 
 	for (size_t k = 0; k < 10; k++ ) {
+
 		clock_t end, start = clock();
 		for (size_t j = 0; j <count; j++) {
 			results_t *rset = filter_match(f, str.data(), str.size());
@@ -342,11 +353,11 @@ int main(int argc, char **argv)
 {
 //	test_c ();
 	//test_perf_wm();
-	test_perf_kmp();
+	//test_perf_kmp();
 
 	//test_single();
 	//test_single_cnt();
-	//test_perf_kmp_cnt();
+	test_perf_kmp_cnt();
 
 	return 0;
 }

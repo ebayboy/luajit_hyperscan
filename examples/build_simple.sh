@@ -1,3 +1,5 @@
 #!/bin/bash
 
-g++ -std=c++11 simplegrep.c -lhs -L ../lib/ -I ../include/ -o simplegrep
+#g++ -std=c++11 simplegrep.c ../lib/libhs.a -I ../include/ -o simplegrep
+
+g++ -O3 -std=c++17 simplegrep_multi.c ../lib/libhs.a -I ../include/ -o simplegrep_multi
