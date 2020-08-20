@@ -302,10 +302,10 @@ int test_perf_wm()
 	patterns.push_back( "anber"  );
 
 	//HS_FLAG_DOTALL 
-	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
-	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
-	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
-	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+	flags.push_back(RULES_HS_FLAGS);
+	flags.push_back(RULES_HS_FLAGS);
+	flags.push_back(RULES_HS_FLAGS);
+	flags.push_back(RULES_HS_FLAGS);
 
 	ids.push_back(1000);
 	ids.push_back(1001);

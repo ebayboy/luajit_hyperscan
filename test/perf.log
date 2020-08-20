@@ -1,8 +1,6 @@
-## no tcmalloc
-avg:7.10667s
 
-##tcmalloc shared
-avg:5.88667s
+1. no tcmalloc: avg:6.63333s
+2. tcmalloc_shared: avg:5.42s
+3. tcmalloc_static: avg:5.30667s
 
-##tcmalloc static
-avg:5.89667s
+performance up: 1.3/5.3 =  24%
