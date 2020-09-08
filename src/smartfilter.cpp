@@ -114,7 +114,7 @@ void *filter_new(const char *name, const char **patterns, unsigned int *flags, u
 	}
 	fprintf(stderr, "malloc filter %p\n", filter);
 
-	strncpy(filter->name, name, strlen(name));
+	strncpy(filter->name, name, sizeof(filter->name) - 1);
 	for (i = 0; i < size; i++) {
 		filter->patterns.push_back(patterns[i]);
 		filter->flags.push_back(flags[i]);
