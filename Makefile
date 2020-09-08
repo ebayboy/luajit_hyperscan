@@ -6,10 +6,10 @@ RANLIB	:= ranlib
 TARGET = build/lib/libsmartfilter.so
 TARGET_STATIC = build/lib/libsmartfilter.a
 
-INCLUDES = -I ./include 
-LIB = -L ./lib
-CFLAGS = -std=c++17 -Wall -fPIC
-LDFLAGS = -shared -lhs
+INCLUDES := -I ./include 
+CFLAGS := -std=c++17 -Wall -fPIC
+LDFLAGS := ./lib/libhs.a
+LIB := 
 
 SRC := $(wildcard src/*.cpp) 
 OBJS=$(SRC:.cpp=.o)
@@ -31,18 +31,15 @@ all: $(TARGET) $(TARGET_STATIC)
 
 $(TARGET): $(OBJS)
 	mkdir -p ./build/{include,lib,bin} 2>&1 &>/dev/null
-	$(LD) -o $@ $^ $(INCLUDES) $(LIB)  $(LDFLAGS)
+	$(LD) -o $@ $^ $(INCLUDES) $(LIB)  $(LDFLAGS) -shared
 	cp -af src/smartfilter.h build/include/
 
 $(TARGET_STATIC) : $(OBJS)
 	mkdir -p ./build/{include,lib,bin} 2>&1 &>/dev/null
-	$(AR) cru $(TARGET_STATIC) $(OBJS)
+	$(AR) cru $(TARGET_STATIC) $(OBJS) $(LDFLAGS)
 	$(RANLIB) $(TARGET_STATIC)
 
 %.o:%.cpp 
-	$(CC) -c -g $< $(INCLUDES) $(CFLAGS) -o $@ 
-
-%.o:%.cc 
 	$(CC) -c -g $< $(INCLUDES) $(CFLAGS) -o $@ 
 
 clean:
