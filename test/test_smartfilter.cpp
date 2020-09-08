@@ -88,6 +88,49 @@ int test_c()
 	return 0;
 }
 
+int test_single_cnt()
+{
+	vector<const char *>patterns;
+	vector<unsigned int>flags;
+	vector<unsigned int>ids;
+
+	patterns.push_back( "this is"  );
+	patterns.push_back( "pattern"  );
+	patterns.push_back( "google!"  );
+	patterns.push_back( "anber"  );
+
+
+	//HS_FLAG_DOTALL 
+	//unsigned int flag  = RULES_HS_FLAGS_LEFTMOST;
+	unsigned int flag  = RULES_HS_FLAGS;
+	flags.push_back(flag);
+	flags.push_back(flag);
+	flags.push_back(flag);
+	flags.push_back(flag);
+
+	ids.push_back(1000);
+	ids.push_back(1001);
+	ids.push_back(1002);
+	ids.push_back(1003);
+
+	void *f = filter_new("TestPerformance", patterns.data(),flags.data(), ids.data(), patterns.size());
+	if (f == NULL) {
+		cout << "Error: filter_new!" << endl;
+		return -1;
+	}
+
+	std::string str = "This is some text I made up.  This will be testing\n" 
+		"multi-pattern matching from Wu/Manber's paper called\n"
+		"'A Fast Algorithm for Multi-Pattern Searching'. Manber is\n";
+
+	int cnt= filter_match_cnt(f, str.data(), str.size());
+	cout << "hit: "  << cnt << endl;
+
+	filter_delete(f);
+
+	return 0;
+}
+
 int test_single()
 {
 	vector<const char *>patterns;
@@ -137,6 +180,54 @@ int test_single()
 
 	return 0;
 }
+
+int test_perf_kmp_cnt()
+{
+	vector<const char *>patterns;
+	vector<unsigned int>flags;
+	vector<unsigned int>ids;
+
+	patterns.push_back( "pattern"  );
+
+
+	//HS_FLAG_DOTALL 
+	flags.push_back(RULES_HS_FLAGS);
+
+	ids.push_back(1000);
+
+	void *f = filter_new("TestPerformance", patterns.data(),flags.data(), ids.data(), patterns.size());
+	if (f == NULL) {
+		cout << "Error: filter_new!" << endl;
+		return -1;
+	}
+
+	std::string str = "This is some text I made up.  This will be testing\n" 
+		"multi-pattern matching from Wu/Manber's paper called\n"
+		"'A Fast Algorithm for Multi-Pattern Searching'. Manber is\n";
+	
+	size_t count = 10000000;
+	double cost = 0;
+
+	for (size_t k = 0; k < 10; k++ ) {
+		clock_t end, start = clock();
+		for (size_t j = 0; j <count; j++) {
+			int cnt = filter_match_cnt(f, str.data(), str.size());
+		}
+
+		end = clock();
+		double use = end - start;
+		cost = cost + use;
+		cout << "cost: " << use/CLOCKS_PER_SEC << "s" << endl;
+	}
+
+	double avg = cost /10;
+
+	cout << "avg:" << avg / CLOCKS_PER_SEC << "s" << endl;
+	filter_delete(f);
+
+	return 0;
+}
+
 
 int test_perf_kmp()
 {
@@ -254,6 +345,8 @@ int main(int argc, char **argv)
 	test_perf_kmp();
 
 	//test_single();
+	//test_single_cnt();
+	//test_perf_kmp_cnt();
 
 	return 0;
 }

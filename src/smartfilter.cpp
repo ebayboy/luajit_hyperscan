@@ -46,6 +46,13 @@ struct context_t {
 	~context_t () {};
 };
 
+static int on_match_cnt(unsigned int id, unsigned long long from, unsigned long long to, unsigned int flags, void *ctx) {
+	int *cnt = (int *)ctx;
+	(*cnt)++;
+    DD("Hit id:%u Match for pattern \"%s\" at offset %llu-%llu cnt:%u\n", id, f->name, from, to, cnt);
+	return 0;
+}
+
 static int on_match(unsigned int id, unsigned long long from, unsigned long long to, unsigned int flags, void *context) {
 
 	context_t *ctx = (context_t *)context;
@@ -157,6 +164,29 @@ error:
 
 	return NULL;
 };
+
+int filter_match_cnt(void *filter, const char *inputData, size_t dlen)
+{
+	filter_t *f = (filter_t *)filter;
+	int cnt  = 0;
+
+	if (filter == NULL || inputData == NULL || dlen == 0) {
+		return -1;
+	}
+
+	if (hs_scan(f->database, inputData, dlen, 0, f->scratch, on_match_cnt, &cnt) != HS_SUCCESS) {
+		fprintf(stderr, "ERROR: Unable to scan input buffer. Exiting.\n");
+		goto error;
+	}
+
+	DD("cnt:%d", cnt);
+
+	return cnt;
+
+error:
+
+	return -1;
+}
 
 /* RETURN:  error: -1;  succcess:  match times */
 results_t * filter_match(void *filter, const char *inputData, size_t dlen)

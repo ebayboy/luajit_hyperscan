@@ -30,9 +30,11 @@ typedef struct {
 	result_t results[RESULT_SET_MAX]; //new
 } results_t;
 
-void *filter_new(const char *name, const char **patterns, unsigned int *flags, unsigned int *ids, size_t size);
-void filter_delete(void *f);
-results_t * filter_match(void *filter, const char *inputData, size_t dlen);
+//scratch not thread safe
+void *filter_new(const char *filtername, const char **patterns, unsigned int *flags, unsigned int *ids, size_t size);
+void filter_delete(void *filter);
+results_t * filter_match(void *filter, const char *data, size_t dlen);
+int filter_match_cnt(void *filter, const char *data, size_t dlen);
 void filter_results_delete(results_t *results);
 
 //for test
