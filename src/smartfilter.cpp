@@ -40,9 +40,9 @@ struct context_t {
 	filter_t *filter;
 	const char *data;
 	size_t dlen;
-	result_set_t *result_set;
+	results_t *results;
 
-	context_t (filter_t *f, const char *data, size_t dlen): filter(f), data(data), dlen(dlen), result_set(NULL) {};
+	context_t (filter_t *f, const char *data, size_t dlen): filter(f), data(data), dlen(dlen), results(NULL) {};
 	~context_t () {};
 };
 
@@ -53,27 +53,27 @@ static int on_match(unsigned int id, unsigned long long from, unsigned long long
 	unsigned int cursor = 0;
 	result_t *r = NULL;
 
-	if (ctx->result_set == NULL){
-		ctx->result_set = new result_set_t();
-		if (ctx->result_set == NULL) {
-			DD("Error: new result_set()");
+	if (ctx->results == NULL){
+		ctx->results = new results_t();
+		if (ctx->results == NULL) {
+			DD("Error: new results()");
 			return -1;
 		}
 	} 
 
-	cursor = ctx->result_set->cursor;
+	cursor = ctx->results->cursor;
 	if (cursor >= RESULT_SET_MAX) {
 		DD("WARN: too max result ! continue! rule->cursor:%u\n", cursor);
 		return 0;
 	}
 
-	r = &ctx->result_set->results[cursor];
+	r = &ctx->results->results[cursor];
 
 	r->id = id;
 	r->from = from;
 	r->to= to;
 
-	ctx->result_set->cursor++;
+	ctx->results->cursor++;
     DD("Hit id:%u Match for pattern \"%s\" at offset %llu-%llu cursor:%u\n", id, f->name, from, to, cursor);
 
     return 0;
@@ -159,11 +159,11 @@ error:
 };
 
 /* RETURN:  error: -1;  succcess:  match times */
-result_set_t * filter_match(void *filter, const char *inputData, size_t dlen)
+results_t * filter_match(void *filter, const char *inputData, size_t dlen)
 {
 	filter_t *f = (filter_t *)filter;
 	context_t *ctx = NULL;
-	result_set_t *rset = NULL;
+	results_t *rset = NULL;
 
 	if (filter == NULL || inputData == NULL || dlen == 0) {
 		return NULL;
@@ -180,8 +180,8 @@ result_set_t * filter_match(void *filter, const char *inputData, size_t dlen)
 	}
 
 	if (ctx) {
-		if (ctx->result_set) {
-			rset = ctx->result_set;
+		if (ctx->results) {
+			rset = ctx->results;
 		}
 		delete ctx;
 	}
@@ -194,9 +194,9 @@ result_set_t * filter_match(void *filter, const char *inputData, size_t dlen)
 
 error:
 	if (ctx) {
-		if (ctx->result_set) {
-			delete ctx->result_set;
-			ctx->result_set = NULL;
+		if (ctx->results) {
+			delete ctx->results;
+			ctx->results = NULL;
 		}
 		delete ctx;
 	}
@@ -204,10 +204,10 @@ error:
 	return NULL;
 }
 
-void filter_result_set_delete(result_set_t *result_set)
+void filter_results_delete(results_t *results)
 {
-	if(result_set) {
-		delete result_set;
+	if(results) {
+		delete results;
 	}
 }
 

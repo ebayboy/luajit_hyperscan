@@ -71,13 +71,13 @@ int test_c()
 	for (size_t k = 0; k < 10; k++ ) {
 		for (size_t j = 0; j <count; j++) {
 			clock_t end, start = clock();
-			result_set_t *rset = filter_match(f, str.data(), str.size());
+			results_t *rset = filter_match(f, str.data(), str.size());
 			result_t *r = NULL;
 
 			end = clock();
 			double use = end - start;
 			cost = cost + use;
-			filter_result_set_delete(rset);
+			filter_results_delete(rset);
 		}
 	}
 	double avg = cost / 10;
@@ -101,7 +101,8 @@ int test_single()
 
 
 	//HS_FLAG_DOTALL 
-	unsigned int flag  = RULES_HS_FLAGS_LEFTMOST;
+	//unsigned int flag  = RULES_HS_FLAGS_LEFTMOST;
+	unsigned int flag  = RULES_HS_FLAGS;
 	flags.push_back(flag);
 	flags.push_back(flag);
 	flags.push_back(flag);
@@ -122,7 +123,7 @@ int test_single()
 		"multi-pattern matching from Wu/Manber's paper called\n"
 		"'A Fast Algorithm for Multi-Pattern Searching'. Manber is\n";
 
-	result_set_t *rset = filter_match(f, str.data(), str.size());
+	results_t *rset = filter_match(f, str.data(), str.size());
 	cout << "hit: "  << rset->cursor << endl;
 
 	for (size_t i = 0; i < rset->cursor; i++) {
@@ -130,7 +131,7 @@ int test_single()
 		printf("id:%u from:%lu to:%lu\n", r->id, r->from, r->to);
 	}
 
-	filter_result_set_delete(rset);
+	filter_results_delete(rset);
 
 	filter_delete(f);
 
@@ -147,7 +148,7 @@ int test_perf_kmp()
 
 
 	//HS_FLAG_DOTALL 
-	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+	flags.push_back(RULES_HS_FLAGS);
 
 	ids.push_back(1000);
 
@@ -167,8 +168,8 @@ int test_perf_kmp()
 	for (size_t k = 0; k < 10; k++ ) {
 		clock_t end, start = clock();
 		for (size_t j = 0; j <count; j++) {
-			result_set_t *rset = filter_match(f, str.data(), str.size());
-			filter_result_set_delete(rset);
+			results_t *rset = filter_match(f, str.data(), str.size());
+			filter_results_delete(rset);
 		}
 
 		end = clock();
@@ -226,8 +227,8 @@ int test_perf_wm()
 	for (size_t k = 0; k < 10; k++ ) {
 		clock_t end, start = clock();
 		for (size_t j = 0; j <count; j++) {
-			result_set_t *rset = filter_match(f, str.data(), str.size());
-			filter_result_set_delete(rset);
+			results_t *rset = filter_match(f, str.data(), str.size());
+			filter_results_delete(rset);
 		}
 
 		end = clock();
@@ -250,9 +251,9 @@ int main(int argc, char **argv)
 {
 //	test_c ();
 	//test_perf_wm();
-	//test_perf_kmp();
+	test_perf_kmp();
 
-	test_single();
+	//test_single();
 
 	return 0;
 }

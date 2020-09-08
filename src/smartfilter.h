@@ -28,12 +28,12 @@ typedef struct {
 typedef struct {
 	unsigned int cursor;
 	result_t results[RESULT_SET_MAX]; //new
-} result_set_t;
+} results_t;
 
 void *filter_new(const char *name, const char **patterns, unsigned int *flags, unsigned int *ids, size_t size);
 void filter_delete(void *f);
-result_set_t * filter_match(void *filter, const char *inputData, size_t dlen);
-void filter_result_set_delete(result_set_t *result_set);
+results_t * filter_match(void *filter, const char *inputData, size_t dlen);
+void filter_results_delete(results_t *results);
 
 //for test
 void hello();
