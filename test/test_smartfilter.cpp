@@ -88,6 +88,55 @@ int test_c()
 	return 0;
 }
 
+int test_single()
+{
+	vector<const char *>patterns;
+	vector<unsigned int>flags;
+	vector<unsigned int>ids;
+
+	patterns.push_back( "this is"  );
+	patterns.push_back( "pattern"  );
+	patterns.push_back( "google!"  );
+	patterns.push_back( "anber"  );
+
+
+	//HS_FLAG_DOTALL 
+	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+
+	ids.push_back(1000);
+	ids.push_back(1001);
+	ids.push_back(1002);
+	ids.push_back(1003);
+
+	void *f = filter_new("TestPerformance", patterns.data(),flags.data(), ids.data(), patterns.size());
+	if (f == NULL) {
+		cout << "Error: filter_new!" << endl;
+		return -1;
+	}
+
+	std::string str = "This is some text I made up.  This will be testing\n" 
+		"multi-pattern matching from Wu/Manber's paper called\n"
+		"'A Fast Algorithm for Multi-Pattern Searching'. Manber is\n";
+
+	result_set_t *rset = filter_match(f, str.data(), str.size());
+	cout << "hit: "  << rset->cursor << endl;
+
+	for (size_t i = 0; i < rset->cursor; i++) {
+		result_t *r = &rset->results[i];
+		printf("id:%u from:%lu to:%lu\n", r->id, r->from, r->to);
+	}
+
+	filter_result_set_delete(rset);
+
+	filter_delete(f);
+
+	return 0;
+}
+
+
 int test_perf()
 {
 	vector<const char *>patterns;
@@ -128,8 +177,8 @@ int test_perf()
 		clock_t end, start = clock();
 		for (size_t j = 0; j <count; j++) {
 			result_set_t *rset = filter_match(f, str.data(), str.size());
+			cout << "hit: "  << rset->cursor << endl;
 			filter_result_set_delete(rset);
-		cout << "hit: "  << rset->cursor << endl;
 		}
 
 		end = clock();
@@ -151,7 +200,8 @@ int test_perf()
 int main(int argc, char **argv)
 {
 //	test_c ();
-	test_perf();
+//	test_perf();
+	test_single();
 
 	return 0;
 }
