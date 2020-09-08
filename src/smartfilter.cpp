@@ -18,8 +18,6 @@ using namespace std;
 	extern "C" {
 #endif
 
-#define DEBUG
-
 #ifdef DEBUG
 #define DD(fmt, args...) printf(fmt, ##args)
 #else
@@ -51,7 +49,7 @@ struct context_t {
 static int on_match(unsigned int id, unsigned long long from, unsigned long long to, unsigned int flags, void *context) {
 
 	context_t *ctx = (context_t *)context;
-	filter_t *f = ctx->filter;
+	//filter_t *f = ctx->filter;
 	unsigned int cursor = 0;
 	result_t *r = NULL;
 

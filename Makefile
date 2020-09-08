@@ -40,7 +40,7 @@ $(TARGET_STATIC) : $(OBJS)
 	$(RANLIB) $(TARGET_STATIC)
 
 %.o:%.cpp 
-	$(CC) -c -g $< $(INCLUDES) $(CFLAGS) -o $@ 
+	$(CC) -c $< $(INCLUDES) $(CFLAGS) -o $@ 
 
 clean:
 	rm -rf ./build/* $(TARGET_STATIC) $(TARGET) $(OBJS) 

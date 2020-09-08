@@ -65,28 +65,93 @@ int test_c()
 
 	string str = "abcde1001as1002fasf";
 
-	result_set_t *rset = filter_match(f, str.data(), str.size());
-	result_t *r = NULL;
+	size_t count = 100000;
+	double cost = 0;
 
-	cout << endl << "====cursor:" << rset->cursor << endl;
+	for (size_t k = 0; k < 10; k++ ) {
+		for (size_t j = 0; j <count; j++) {
+			clock_t end, start = clock();
+			result_set_t *rset = filter_match(f, str.data(), str.size());
+			result_t *r = NULL;
 
-	if (rset) {
-		for(unsigned int i= 0; i < rset->cursor; i++)	{
-			r = &rset->results[i];
-			printf("%s:%d rset id:%u from:%u to:%u\n", __func__, __LINE__,  r->id, r->from, r->id);
+			end = clock();
+			double use = end - start;
+			cost = cost + use;
+			filter_result_set_delete(rset);
 		}
 	}
-
-	filter_result_set_delete(rset);
+	double avg = cost / 10;
+	cout << "avg:" << avg / CLOCKS_PER_SEC << "s" << endl;
 
 	filter_delete(f);
 
 	return 0;
 }
 
+int test_perf()
+{
+	vector<const char *>patterns;
+	vector<unsigned int>flags;
+	vector<unsigned int>ids;
+
+	patterns.push_back( "this is"  );
+	patterns.push_back( "pattern"  );
+	patterns.push_back( "google!"  );
+	patterns.push_back( "anber"  );
+
+
+	//HS_FLAG_DOTALL 
+	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+	flags.push_back(RULES_HS_FLAGS_LEFTMOST);
+
+	ids.push_back(1000);
+	ids.push_back(1001);
+	ids.push_back(1002);
+	ids.push_back(1003);
+
+	void *f = filter_new("TestPerformance", patterns.data(),flags.data(), ids.data(), patterns.size());
+	if (f == NULL) {
+		cout << "Error: filter_new!" << endl;
+		return -1;
+	}
+
+	std::string str = "This is some text I made up.  This will be testing\n" 
+		"multi-pattern matching from Wu/Manber's paper called\n"
+		"'A Fast Algorithm for Multi-Pattern Searching'. Manber is\n";
+	
+	size_t count = 100000;
+	double cost = 0;
+
+	for (size_t k = 0; k < 10; k++ ) {
+		clock_t end, start = clock();
+		for (size_t j = 0; j <count; j++) {
+			result_set_t *rset = filter_match(f, str.data(), str.size());
+			filter_result_set_delete(rset);
+		cout << "hit: "  << rset->cursor << endl;
+		}
+
+		end = clock();
+		double use = end - start;
+		cost = cost + use;
+		cout << "cost: " << use/CLOCKS_PER_SEC << "s" << endl;
+	}
+
+	double avg = cost /10;
+
+	cout << "avg:" << avg / CLOCKS_PER_SEC << "s" << endl;
+	filter_delete(f);
+
+	return 0;
+}
+
+
+
 int main(int argc, char **argv)
 {
-	test_c ();
+//	test_c ();
+	test_perf();
 
 	return 0;
 }
