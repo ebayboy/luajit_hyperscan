@@ -200,8 +200,9 @@ int test_perf()
 int main(int argc, char **argv)
 {
 //	test_c ();
-//	test_perf();
-	test_single();
+	test_perf();
+
+	//test_single();
 
 	return 0;
 }
