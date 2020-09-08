@@ -22,7 +22,7 @@ using namespace std;
 
 #define DEBUG 
 
-int main(int argc, char **argv)
+int test_c()
 {
 	hello();
 
@@ -80,6 +80,13 @@ int main(int argc, char **argv)
 	filter_result_set_delete(rset);
 
 	filter_delete(f);
+
+	return 0;
+}
+
+int main(int argc, char **argv)
+{
+	test_c ();
 
 	return 0;
 }
