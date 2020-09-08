@@ -177,7 +177,6 @@ int test_perf()
 		clock_t end, start = clock();
 		for (size_t j = 0; j <count; j++) {
 			result_set_t *rset = filter_match(f, str.data(), str.size());
-			cout << "hit: "  << rset->cursor << endl;
 			filter_result_set_delete(rset);
 		}
 
