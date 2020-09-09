@@ -1,11 +1,11 @@
 /****************************************************************************
-@file:testfilter.cpp 
-@author:ebayboy@163.com 
-@date:2020-08-17 10:42 
-@version: 1.0  
-@description: cpp file 
-@Copyright (c)  all right reserved 
-**************************************************************************/
+  @file:testfilter.cpp 
+  @author:ebayboy@163.com 
+  @date:2020-08-17 10:42 
+  @version: 1.0  
+  @description: cpp file 
+  @Copyright (c)  all right reserved 
+ **************************************************************************/
 
 #include <iostream>
 #include <string>
@@ -210,13 +210,13 @@ int test_perf_kmp_cnt()
 	std::string str = "This is some text I made up.  This will be testing\n" 
 		"multi-pattern matching from Wu/Manber's paper called\n"
 		"'A Fast Algorithm for Multi-Pattern Searching'. Manber is\n";
-	
+
 	size_t count = 10000000;
 	double cost = 0;
 
 	for (size_t k = 0; k < 3; k++ ) {
 
-    int cnt  = 0;
+		int cnt  = 0;
 		clock_t end, start = clock();
 		for (size_t j = 0; j <count; j++) {
 			cnt = filter_match_cnt(f, str.data(), str.size());
@@ -225,9 +225,8 @@ int test_perf_kmp_cnt()
 		end = clock();
 		double use = end - start;
 		cost = cost + use;
-    cout << "cost: " << use/CLOCKS_PER_SEC << "s" << endl;
-    cout << "cnt:" << cnt << endl;
-  }
+		cout << "cost: " << use/CLOCKS_PER_SEC << "s" <<  " cnt:" << cnt << endl;
+	}
 
 	double avg = cost /3;
 
@@ -261,7 +260,7 @@ int test_perf_kmp()
 	std::string str = "This is some text I made up.  This will be testing\n" 
 		"multi-pattern matching from Wu/Manber's paper called\n"
 		"'A Fast Algorithm for Multi-Pattern Searching'. Manber is\n";
-	
+
 	size_t count = 10000000;
 	double cost = 0;
 
@@ -319,11 +318,11 @@ int test_perf_wm()
 	std::string str = "This is some text I made up.  This will be testing\n" 
 		"multi-pattern matching from Wu/Manber's paper called\n"
 		"'A Fast Algorithm for Multi-Pattern Searching'. Manber is\n";
-	
+
 	size_t count = 10000000;
 	double cost = 0;
 
-  size_t loops = 3;
+	size_t loops = 3;
 	for (size_t k = 0; k < loops; k++ ) {
 
 		clock_t end, start = clock();
@@ -350,13 +349,13 @@ int test_perf_wm()
 
 int main(int argc, char **argv)
 {
-//	test_c ();
-	test_perf_wm();
+	//	test_c ();
+	//test_perf_wm();
 	//test_perf_kmp();
 
 	//test_single();
 	//test_single_cnt();
-	//test_perf_kmp_cnt();
+	test_perf_kmp_cnt();
 
 	return 0;
 }

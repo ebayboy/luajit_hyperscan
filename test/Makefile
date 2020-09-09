@@ -37,7 +37,7 @@ CONV=n
 ifeq ($(DEBUG),y)
 	CFLAGS += -g -O0
 else
-	CFLAGS += -O2
+	CFLAGS += -O3 -g2
 endif
 
 ifeq ($(CONV),y)
