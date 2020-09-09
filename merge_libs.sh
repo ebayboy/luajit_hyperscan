@@ -11,6 +11,8 @@
 #* 
 #**************************************************************************/ 
 
+# merge .libsmartfitler.a and libhs.a
+
 cat <<EOF > libsmartfilter_hs.mri
 create libsmartfilter_hs.a
 addlib .libsmartfilter.a
