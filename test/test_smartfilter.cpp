@@ -72,8 +72,6 @@ int test_c()
 		for (size_t j = 0; j <count; j++) {
 			clock_t end, start = clock();
 			results_t *rset = filter_match(f, str.data(), str.size());
-			result_t *r = NULL;
-
 			end = clock();
 			double use = end - start;
 			cost = cost + use;
@@ -171,7 +169,7 @@ int test_single()
 
 	for (size_t i = 0; i < rset->cursor; i++) {
 		result_t *r = &rset->results[i];
-		printf("id:%u from:%lu to:%lu\n", r->id, r->from, r->to);
+		printf("id:%u from:%llu to:%llu\n", r->id, r->from, r->to);
 	}
 
 	filter_results_delete(rset);
