@@ -4,7 +4,7 @@ AR		:= ar
 RANLIB	:= ranlib
 
 TARGET = build/lib/libsmartfilter.so
-TARGET_STATIC = build/lib/libsmartfilter.a
+TARGET_STATIC = .libsmartfilter.a
 
 INCLUDES := -I ./include 
 CFLAGS := -std=c++17 -Wall -fPIC
@@ -35,12 +35,12 @@ $(TARGET): $(OBJS)
 	cp -af src/smartfilter.h build/include/
 
 $(TARGET_STATIC) : $(OBJS) 
-	mkdir -p ./build/{include,lib,bin} 2>&1 &>/dev/null
-	$(AR) cru $(TARGET_STATIC) $(OBJS) $(LDFLAGS) 
+	$(AR) cru $(TARGET_STATIC) $(OBJS) 
 	$(RANLIB) $(TARGET_STATIC)
+	./merge_libs.sh
 
 %.o:%.cpp 
 	$(CC) -c $< $(INCLUDES) $(CFLAGS) -o $@ 
 
 clean:
-	rm -rf ./build/* $(TARGET_STATIC) $(TARGET) $(OBJS) 
+	rm -rf ./build/* $(TARGET_STATIC) $(TARGET) $(OBJS)  ./tmp

@@ -10,9 +10,8 @@ SOURCE += $(wildcard *.cpp)
 # 匹配的部分替换，其他部分不变
 
 OBJS   := $(patsubst %.c,%.o, $(patsubst %.cpp,%.o, $(patsubst %cc,%o, $(SOURCE)) ))
-#$(warning "OBJS1:"$(OBJS))
+#$(warning "OBJS:"$(OBJS))
 
-#g++ -std=c++17 -O3 -o test_static_tcmalloc_static test_smartfilter.cpp ../build/lib/libsmartfilter.a -I ../build/include/ ../lib/libhs.a  
 TARGET	:= test_static test_static_tcmalloc
 
 DEFINES :=
@@ -26,7 +25,7 @@ CFLAGS	:= -c -std=c++17 -Wall
 #DEFINES +=
 #LIBS	+= 
 INCLUDE += -I ../build/include/
-LDFLAGS += ../build/lib/libsmartfilter.a ../lib/libhs.a
+LDFLAGS += ../build/lib/libsmartfilter.a
 #CFLAGS	+= 
 
 ############## add self define  ######################
@@ -67,17 +66,17 @@ veryclean : clean
 	rm -rf *.so *.gcno *.gcda
 
 %.o:%.c
-	$(CC) $(CFLAGS) $< $(INCLUDE) -o $@
+	$(CC) $(CXXFLAGS) $< $(INCLUDE) -o $@
 
 %.o:%.cc
-	$(CC) $(CFLAGS) $< $(INCLUDE) -o $@
+	$(CC) $(CXXFLAGS) $< $(INCLUDE) -o $@
 
 %.o:%.cpp
-	$(CC) $(CFLAGS) $< $(INCLUDE) -o $@
+	$(CC) $(CXXFLAGS) $< $(INCLUDE) -o $@
 
 test_static : $(OBJS)
 	$(CC) -o $@ $(OBJS) $(LDFLAGS) $(LIBS)
 
-test_static_tcmalloc : $(OBJS)
+test_static_tcmalloc : $(objs)
 	$(CC) -o $@ $(OBJS) $(LDFLAGS) $(LIBS) /usr/local/gperftools/lib/libtcmalloc_minimal.a
 
