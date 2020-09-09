@@ -10,7 +10,7 @@ g++ -std=c++17 -O3 -o test_static test_smartfilter.cpp ../build/lib/libsmartfilt
 
 
 ## build with tcmalloc
-g++ -std=c++17 -O3 -o test_static_tcmalloc test_smartfilter.cpp ../build/lib/libsmartfilter.a -I ../build/include/ ../lib/libhs.a  -ltcmalloc -L /usr/local/tcmalloc/lib
+#g++ -std=c++17 -O3 -o test_static_tcmalloc test_smartfilter.cpp ../build/lib/libsmartfilter.a -I ../build/include/ ../lib/libhs.a  -ltcmalloc -L /usr/local/tcmalloc/lib
 
 ##build tc_static
-g++ -std=c++17 -O3 -o test_static_tcmalloc_static test_smartfilter.cpp ../build/lib/libsmartfilter.a -I ../build/include/ ../lib/libhs.a  /usr/local/tcmalloc/lib/libtcmalloc.a -lpthread
+g++ -std=c++17 -O3 -o test_static_tcmalloc_static test_smartfilter.cpp ../build/lib/libsmartfilter.a -I ../build/include/ ../lib/libhs.a  /usr/local/gperftools/lib/libtcmalloc_minimal.a -lpthread

@@ -4,3 +4,27 @@
 3. tcmalloc_static: avg:5.30667s
 
 performance up: 1.3/5.3 =  24%
+
+
+malloc filter 0x197bcb0
+alloc database:0x19813b0
+alloc scratch:0x197fec0
+cost: 5.24s
+cost: 5.77s
+cost: 6.06s
+avg:5.69s
+free scratch 0x197fec0
+free database 0x19813b0
+free filter 0x197bcb0
+[root@localhost test]# ./test_static_tcmalloc_static 
+malloc filter 0x344e000
+alloc database:0x3492000
+alloc scratch:0x3498000
+cost: 3.88s
+cost: 3.93s
+cost: 4.44s
+avg:4.08333s
+free scratch 0x3498000
+free database 0x3492000
+free filter 0x344e000
+
