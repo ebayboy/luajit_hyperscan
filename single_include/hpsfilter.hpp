@@ -12,12 +12,13 @@
 using namespace std;
 
 #ifdef DEBUG
-#define DD(fmt, args...) printf(fmt, ##args)
+
+#define DD(fmt, ...) do  { fprintf(stdout, fmt, ##__VA_ARGS__); } while(0)
 #else
 #define DD(fmt, args...)
 #endif
 
-#define ERROR(fmt, args...) fprintf(stderr, fmt, ##args)
+#define ERROR(fmt, ...) do  { fprintf(stderr, fmt, ##__VA_ARGS__); } while(0)
 
 #define FLAGS_FAST   (HS_FLAG_CASELESS    | \
 		HS_FLAG_SINGLEMATCH | \
@@ -26,6 +27,7 @@ using namespace std;
 #define FLAGS_LEFTMOST        (HS_FLAG_CASELESS    | \
 		HS_FLAG_DOTALL      | \
 		HS_FLAG_SOM_LEFTMOST)
+
 
 class HPSFilter  {
 	public:
@@ -137,6 +139,8 @@ class HPSFilter  {
 		static int _on_match (unsigned int id, unsigned long long from, unsigned long long to, unsigned int flags, void *ctx_vec){
 			auto vec = static_cast<vector<tuple<unsigned int, unsigned long long, unsigned long long>> *>(ctx_vec); //ok
 			vec->push_back(std::tuple<int, char, double>(id, from, to));
+
+			//DD("id:%u flags:%d", id, flags);
 
 			return 0;
 		}

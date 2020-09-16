@@ -5,7 +5,7 @@ TARGET = test
 
 INCLUDES := -I /usr/local/googletest/include/ -I /usr/local/glog/include/
 LIB = 
-CFLAGS := -c -g -O0 -std=c++17 -Wall
+CFLAGS := -c -g -O0 -std=c++17 -Wall -DDEBUG
 LDFLAGS := -lpthread 
 LDFLAGS += /usr/local/googletest/lib64/libgtest.a
 
@@ -23,7 +23,7 @@ LDFLAGS += /usr/local/hyperscan/lib/libhs.a
 
 #$(warning $(OBJS_C))
 
-.PHONY:all clean
+.PHONY:all clean test
 
 all: $(TARGET)
 $(TARGET): $(OBJS_C) $(OBJS_CPP)
