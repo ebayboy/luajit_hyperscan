@@ -27,9 +27,9 @@ using namespace std;
 
 class hpsfilter  {
 	public:
-		hpsfilter(vector<const char *> exprs, vector<unsigned int> ids, vector<unsigned int> flags) : exprs(_exprs), ids(_ids), flags(_flags), _init_ok(false) {
+		hpsfilter(vector<const char *> exprs, vector<unsigned int> ids, vector<unsigned int> flags) : _exprs(exprs), _ids(ids), _flags(flags) {
 			if (_exprs.size() != _ids.size() ||  _ids.size() != _flags.size()) {
-				ERROR("Error: exprs.size:%d _ids.size:%s flags.size:%d\n", _exprs.size(), _ids.size(), _flags.size());
+				ERROR("Error: exprs.size:%lu _ids.size:%lu flags.size:%lu\n", _exprs.size(), _ids.size(), _flags.size());
 				_init_ok = false;
 			}
 		}
@@ -39,7 +39,7 @@ class hpsfilter  {
 				hs_free_scratch(_scratch);
 				_scratch = nullptr;
 			}
-			if (f->database) {
+			if (_db) {
 				hs_free_database(_db);
 				_db = nullptr;
 			}
@@ -48,15 +48,15 @@ class hpsfilter  {
 		//init from bytes db 
 		int init(const char *byte_db, const size_t len) {
 			if (byte_db == nullptr ||  len == 0) {
-				ERROR("byte_db:%p len:%d\n")
+				ERROR("byte_db:%p len:%lu\n", byte_db, len);
 			}
-			hs_error_t err = hs_deserialize_database(byte_db, len, _db)
+			hs_error_t err = hs_deserialize_database(byte_db, len, &_db);
 			if ( err != HS_SUCCESS) {
 				ERROR("Error: code:%d\n", err);
 				return -1;
 			}
 
-			err = hs_alloc_scratch(_db, _scratch);
+			err = hs_alloc_scratch(_db, &_scratch);
 			if (err != HS_SUCCESS) {
 				ERROR("ERROR: error hs_alloc_scratch code:%d\n", err);
 				return -1;
@@ -72,9 +72,9 @@ class hpsfilter  {
 			hs_error_t err;
 
 			err = hs_compile_multi(_exprs.data(),
-					flags.data(),
-					ids.data(),
-					exprs.size(),
+					_flags.data(),
+					_ids.data(),
+					_exprs.size(),
 					HS_MODE_BLOCK, 
 					nullptr,  //platform
 					&_db,
@@ -84,13 +84,13 @@ class hpsfilter  {
 					ERROR("Error:%s\n", compile_err->message);
 					hs_free_compile_error(compile_err);
 				} else {
-					ERROR("ERROR: Pattern %s' failed with error:%s\n" ,exprs[compile_err->expression], compile_err->message);
+					ERROR("ERROR: Pattern %s' failed with error:%s\n" , _exprs[compile_err->expression], compile_err->message);
 					hs_free_compile_error(compile_err);
 				}
 			}
 
 			//alloc scratch
-			err = hs_alloc_scratch(_db, _scratch) 
+			err = hs_alloc_scratch(_db, &_scratch);
 			if ( err != HS_SUCCESS) {
 				ERROR("ERROR: Unable to allocate scratch space. Exiting. code:%d\n", err);
 			}
@@ -100,8 +100,19 @@ class hpsfilter  {
 			return 0;
 		}
 
+		//Note: bytes should free outside 
+		int dumpdb(char **bytes, size_t *length) {
+			hs_error_t err;
+			if ((err = hs_serialize_database(_db, bytes, length) != HS_SUCCESS)) {
+				ERROR("ERROR: error:%d\n", err);
+				return -1;
+			}
+
+			return 0;
+		}
+
 	private:
-		bool _init_ok;
+		bool _init_ok  = false;
 		hs_database_t *_db;
 		hs_scratch_t *_scratch;
 

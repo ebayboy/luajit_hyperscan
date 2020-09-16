@@ -18,7 +18,7 @@ DEFINES :=
 LIBS	:= -L.
 INCLUDE := -I.
 LDFLAGS := -lpthread
-CFLAGS	:= -c -std=c++17 -Wall
+CFLAGS	:= -c -std=c++17 -Wall -Werror
 
 ############## add self define  ######################
 
