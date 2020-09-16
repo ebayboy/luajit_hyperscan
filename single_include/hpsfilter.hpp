@@ -1,9 +1,11 @@
 #pragma once
 
-#include <cstring>
-#include <vector>
 #include <iostream>
 #include <string_view>
+#include <tuple>
+#include <vector>
+
+#include <cstring>
 
 #include <hs.h>
 
@@ -25,16 +27,16 @@ using namespace std;
 		HS_FLAG_DOTALL      | \
 		HS_FLAG_SOM_LEFTMOST)
 
-class hpsfilter  {
+class HPSFilter  {
 	public:
-		hpsfilter(vector<const char *> exprs, vector<unsigned int> ids, vector<unsigned int> flags) : _exprs(exprs), _ids(ids), _flags(flags) {
+		HPSFilter(vector<const char *> exprs, vector<unsigned int> ids, vector<unsigned int> flags) : _exprs(exprs), _ids(ids), _flags(flags) {
 			if (_exprs.size() != _ids.size() ||  _ids.size() != _flags.size()) {
 				ERROR("Error: exprs.size:%lu _ids.size:%lu flags.size:%lu\n", _exprs.size(), _ids.size(), _flags.size());
 				_init_ok = false;
 			}
 		}
 
-		~hpsfilter() {
+		~HPSFilter() {
 			if (_scratch) {
 				hs_free_scratch(_scratch);
 				_scratch = nullptr;
@@ -46,7 +48,7 @@ class hpsfilter  {
 		}
 
 		//init from bytes db 
-		int init(const char *byte_db, const size_t len) {
+		int Init(const char *byte_db, const size_t len) {
 			if (byte_db == nullptr ||  len == 0) {
 				ERROR("byte_db:%p len:%lu\n", byte_db, len);
 			}
@@ -67,7 +69,7 @@ class hpsfilter  {
 		}
 
 		//init from exprs
-		int init() {
+		int Init() {
 			hs_compile_error_t *compile_err = nullptr;
 			hs_error_t err;
 
@@ -100,8 +102,28 @@ class hpsfilter  {
 			return 0;
 		}
 
+		int Match(string_view sv, vector<tuple<unsigned int, unsigned long long , unsigned long long >> &vec_res){
+			hs_error_t err;
+			if (!_init_ok)	{
+				ERROR("ERROR: _init_ok: false!");
+				return -1;
+			}
+			if (_db == nullptr || _scratch == nullptr) {
+				ERROR("ERROR: _db:%p _scratch:%p\n", _db, _scratch);
+				return -1;
+			}
+			
+			err = hs_scan(_db, sv.data(), sv.size(), 0, _scratch, _on_match, std::addressof(vec_res));
+			if (err != HS_SUCCESS) {
+				ERROR("ERROR: err:%d\n", err);
+				return -1;
+			}
+
+			return 0;
+		}
+
 		//Note: bytes should free outside 
-		int dumpdb(char **bytes, size_t *length) {
+		int DumpDB(char **bytes, size_t *length) {
 			hs_error_t err;
 			if ((err = hs_serialize_database(_db, bytes, length) != HS_SUCCESS)) {
 				ERROR("ERROR: error:%d\n", err);
@@ -112,6 +134,13 @@ class hpsfilter  {
 		}
 
 	private:
+		static int _on_match (unsigned int id, unsigned long long from, unsigned long long to, unsigned int flags, void *ctx_vec){
+			auto vec = static_cast<vector<tuple<unsigned int, unsigned long long, unsigned long long>> *>(ctx_vec); //ok
+			vec->push_back(std::tuple<int, char, double>(id, from, to));
+
+			return 0;
+		}
+
 		bool _init_ok  = false;
 		hs_database_t *_db;
 		hs_scratch_t *_scratch;
@@ -119,7 +148,8 @@ class hpsfilter  {
 		vector<const char *> _exprs; //need free
 		vector<unsigned int> _ids;
 		vector<unsigned int> _flags; 
-
-		hpsfilter(const hpsfilter &) = delete;
-		hpsfilter &operator=(const hpsfilter &) = delete;
+		
+		//nocopyable
+		HPSFilter(const HPSFilter &) = delete;
+		HPSFilter &operator=(const HPSFilter &) = delete;
 };

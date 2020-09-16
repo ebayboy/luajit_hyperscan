@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include "smartfilter.hpp"
+#include "hpsfilter.hpp"
 
 using namespace std;
 

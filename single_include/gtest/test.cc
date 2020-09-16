@@ -21,6 +21,24 @@ using namespace std;
 
 //#include unit test header
 
+int test_hps_init1()
+{
+	vector<const char *> exprs {"1000", "1001", "1002"}; 
+	vector<unsigned int> ids {1000, 1001, 1002};
+	vector<unsigned int> flags {FLAGS_FAST, FLAGS_FAST, FLAGS_LEFTMOST}; 
+
+}
+
+int test_hps_init2()
+{
+
+}
+
+int test_hps_dumpdb()
+{
+
+}
+
 #if 0
 TEST(protobuf, test_write)
 {
