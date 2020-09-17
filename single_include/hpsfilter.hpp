@@ -4,6 +4,7 @@
 #include <string_view>
 #include <tuple>
 #include <vector>
+#include <memory>
 
 #include <cstring>
 
@@ -124,13 +125,16 @@ class HPSFilter  {
 			return 0;
 		}
 
-		//Note: bytes should free outside 
-		int DumpDB(char **bytes, size_t *length) {
+		int DumpDB(std::shared_ptr<char> &sp_data, size_t &len) {
+			char *data = nullptr;
 			hs_error_t err;
-			if ((err = hs_serialize_database(_db, bytes, length) != HS_SUCCESS)) {
+			if ((err = hs_serialize_database(_db, &data, &len) != HS_SUCCESS)) {
 				ERROR("ERROR: error:%d\n", err);
 				return -1;
 			}
+
+			shared_ptr<char> sp(data);
+			sp_data = sp;
 
 			return 0;
 		}

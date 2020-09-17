@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <fstream>
 #include <memory>
+#include <fstream>
 
 #include <gtest/gtest.h>
 
@@ -53,16 +54,47 @@ int test_hps_init1()
 
 int test_hps_init2()
 {
-
+	return 0;
 }
 
 int test_hps_dumpdb()
 {
+	vector<const char *> exprs {"1000", "1001", "1002"}; 
+	vector<unsigned int> ids {1000, 1001, 1002};
+	vector<unsigned int> flags {FLAGS_FAST, FLAGS_FAST, FLAGS_LEFTMOST}; 
 
+	auto filter = make_shared<HPSFilter>(exprs, ids, flags);
+	int ret = filter->Init();
+
+	size_t length = 0;
+	std::shared_ptr<char> sp_bytes;
+
+	ret = filter->DumpDB(sp_bytes, length);
+	if (ret != 0) {
+		cerr << "error:ret:%d" << ret << endl;
+		return -1;
+	}
+
+	cout << "db:" << std::addressof(sp_bytes) << endl;
+	cout << "length:" << length << endl;
+
+
+	ofstream of("./dumpdb.dat", ios::binary);
+	if (of.bad()) {
+		cerr << "Error open file!" << endl;
+		return -1;
+	}
+
+	of.write(sp_bytes.get(), length);
+
+	of.close();
+
+	return 0;
 }
 
 TEST(HPSFilter, test_hps_init1)
 {
 	ASSERT_TRUE(test_hps_init1() == 0);
+	ASSERT_TRUE(test_hps_dumpdb() == 0);
 }
 
