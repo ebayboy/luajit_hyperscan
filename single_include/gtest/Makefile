@@ -5,7 +5,7 @@ TARGET = test
 
 INCLUDES := -I /usr/local/googletest/include/ -I /usr/local/glog/include/
 LIB = 
-CFLAGS := -c -g -O0 -std=c++17 -Wall -DDEBUG
+CFLAGS := -c -g2 -O3 -std=c++17 -Wall -DDEBUG
 LDFLAGS := -lpthread 
 LDFLAGS += /usr/local/googletest/lib64/libgtest.a
 
@@ -18,7 +18,7 @@ OBJS_CPP=$(SRC_CPP:.cc=.o)
 #===========add other libs start
 INCLUDES += -I ../
 INCLUDES += -I /usr/local/hyperscan/include/
-LDFLAGS += /usr/local/hyperscan/lib/libhs.a
+LDFLAGS += /usr/local/hyperscan/lib/libhs.a  /usr/local/gperftools/lib/libtcmalloc_minimal.a
 #===========add other libs end
 
 #$(warning $(OBJS_C))
