@@ -60,6 +60,7 @@ class HPSFilter  {
 		int Init(const char *byte_db, const size_t len) {
 			if (byte_db == nullptr ||  len == 0) {
 				ERROR("byte_db:%p len:%lu\n", byte_db, len);
+				return -1;
 			}
 			hs_error_t err = hs_deserialize_database(byte_db, len, &_db);
 			if ( err != HS_SUCCESS) {
@@ -98,12 +99,14 @@ class HPSFilter  {
 					ERROR("ERROR: Pattern %s' failed with error:%s\n" , _exprs[compile_err->expression], compile_err->message);
 					hs_free_compile_error(compile_err);
 				}
+				return -1;
 			}
 
 			//alloc scratch
 			err = hs_alloc_scratch(_db, &_scratch);
 			if ( err != HS_SUCCESS) {
-				ERROR("ERROR: Unable to allocate scratch space. Exiting. code:%d\n", err);
+				ERROR("ERROR: Unable to allocate scratch space. Exiting.  _db:%p code:%d\n", std::addressof(_db), err);
+				return -1;
 			}
 	
 			_init_ok = true;
@@ -138,12 +141,14 @@ class HPSFilter  {
 					ERROR("ERROR: Pattern %s' failed with error:%s\n" , _exprs[compile_err->expression], compile_err->message);
 					hs_free_compile_error(compile_err);
 				}
+				return -1;
 			}
 
 			//alloc scratch
 			err = hs_alloc_scratch(_db, &_scratch);
 			if ( err != HS_SUCCESS) {
 				ERROR("ERROR: Unable to allocate scratch space. Exiting. code:%d\n", err);
+				return -1;
 			}
 	
 			_init_ok = true;
@@ -164,7 +169,7 @@ class HPSFilter  {
 			
 			err = hs_scan(_db, sv.data(), sv.size(), 0, _scratch, _on_match, std::addressof(vec_res));
 			if (err != HS_SUCCESS) {
-				ERROR("ERROR: err:%d\n", err);
+				ERROR("ERROR: hs_scan err:%d\n", err);
 				return -1;
 			}
 

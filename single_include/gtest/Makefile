@@ -18,7 +18,9 @@ OBJS_CPP=$(SRC_CPP:.cc=.o)
 #===========add other libs start
 INCLUDES += -I ../
 INCLUDES += -I /usr/local/hyperscan/include/
-LDFLAGS += /usr/local/hyperscan/lib/libhs.a  /usr/local/gperftools/lib/libtcmalloc_minimal.a
+LDFLAGS += /usr/local/hyperscan/lib/libhs.a  
+# TODO: hyerscan 5.3 with build with tcmalloc, scratch alloc error ??
+#LDFLAGS += /usr/local/gperftools/lib/libtcmalloc_minimal.a
 #===========add other libs end
 
 #$(warning $(OBJS_C))

@@ -33,12 +33,16 @@ int test_hps_init1()
 	auto filter = make_shared<HPSFilter>(exprs, ids, flags);
 
 	int ret = filter->Init();
+	if (ret != 0) {
+		cerr <<  "Error: init code:" << ret << endl;
+		exit(-1);
+	}
 
 	vector<tuple<unsigned int, unsigned long long , unsigned long long >> vec_res;
 	int err = filter->Match(data, vec_res);
 	if (err != 0) {
-		cout << "error match!" << endl;
-		return -1;
+		cout << "Error: error match!" << endl;
+		exit(-1);
 	}
 
 	cout << "ret:" << ret << endl;
