@@ -21,6 +21,7 @@ using namespace std;
 
 #define ERROR(fmt, ...) do  { fprintf(stderr, fmt, ##__VA_ARGS__); } while(0)
 
+//FLAGS
 #define FLAGS_FAST   (HS_FLAG_CASELESS    | \
 		HS_FLAG_SINGLEMATCH | \
 		HS_FLAG_DOTALL)
@@ -29,6 +30,11 @@ using namespace std;
 		HS_FLAG_DOTALL      | \
 		HS_FLAG_SOM_LEFTMOST)
 
+#define FLAGS_LIT_FAST  \
+	(HS_FLAG_CASELESS | HS_FLAG_SINGLEMATCH)
+
+#define FLAGS_LIT_LEFTMOST  \
+	(HS_FLAG_CASELESS | HS_FLAG_SOM_LEFTMOST)
 
 class HPSFilter  {
 	public:
@@ -82,6 +88,46 @@ class HPSFilter  {
 					_exprs.size(),
 					HS_MODE_BLOCK, 
 					nullptr,  //platform
+					&_db,
+					&compile_err);
+			if (err != HS_SUCCESS) {
+				if (compile_err->expression < 0) {
+					ERROR("Error:%s\n", compile_err->message);
+					hs_free_compile_error(compile_err);
+				} else {
+					ERROR("ERROR: Pattern %s' failed with error:%s\n" , _exprs[compile_err->expression], compile_err->message);
+					hs_free_compile_error(compile_err);
+				}
+			}
+
+			//alloc scratch
+			err = hs_alloc_scratch(_db, &_scratch);
+			if ( err != HS_SUCCESS) {
+				ERROR("ERROR: Unable to allocate scratch space. Exiting. code:%d\n", err);
+			}
+	
+			_init_ok = true;
+
+			return 0;
+		}
+
+		//init from exprs
+		int InitLit() {
+			hs_compile_error_t *compile_err = nullptr;
+			hs_error_t err;
+			vector <size_t> expr_lens;
+
+			for (auto && ex : _exprs) {
+				expr_lens.push_back(strlen(ex));
+			}
+
+			err = hs_compile_lit_multi(_exprs.data(),
+					_flags.data(),
+					_ids.data(),
+					expr_lens.data(),
+					_exprs.size(),
+					HS_MODE_BLOCK, 
+					0,
 					&_db,
 					&compile_err);
 			if (err != HS_SUCCESS) {
